@@ -9,7 +9,9 @@ echo "Name,VolumeID, InstanceID, AvailabilityZone,Size,Type,State" >> output.csv
 
 for i in `cat input.txt`
 do
- aws ec2 describe-volumes  --volume-ids $i  --filters Name=tag:Name,Values=*  --query 'Volumes[*]. {Name:Tags[0].Value,VolumeID:VolumeId,InstanceID:Attachments[0].InstanceId,AvailabilityZone:AvailabilityZone,Size:Size,Type:VolumeType,State:State}' --region $region >> output.json
+# aws ec2 describe-volumes  --volume-ids $i  --filters Name=tag:Name,Values=*  --query 'Volumes[*]. {Name:Tags[0].Value,VolumeID:VolumeId,InstanceID:Attachments[0].InstanceId,AvailabilityZone:AvailabilityZone,Size:Size,Type:VolumeType,State:State}' --region $region >> output.json
+
+aws ec2 describe-volumes --volume-ids $i --query 'Volumes[*].{Name:Tags[?Key==`Name`].Value|[0],VolumeID:VolumeId,InstanceID:Attachments[0].InstanceId,AvailabilityZone:AvailabilityZone,Size:Size,Type:VolumeType,State:State}' --region $region >> output.json
 
 done
 
